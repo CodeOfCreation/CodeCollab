@@ -1,0 +1,222 @@
+/* Custom styles for CodeCollab */
+body {
+    background-color: #efc6ec;
+    scroll-behavior: smooth;
+}
+
+.navbar-bg {
+    background-color: #7D48EE;
+}
+
+.hover-color {
+    background-color: #8D1651;
+}
+
+/* Syntax highlighting for code blocks */
+pre {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Form styling */
+.form-input {
+    width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+}
+
+.form-label {
+    display: block;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+/* Button styling */
+.btn {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 300ms;
+}
+
+.btn-primary {
+    background-color: #7c3aed;
+    color: #ffffff;
+}
+.btn-primary:hover {
+    background-color: #6d28d9;
+}
+
+.btn-secondary {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+.btn-secondary:hover {
+    background-color: #1d4ed8;
+}
+
+/* Card styling */
+.card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+/* Tag styling */
+.tag {
+    background-color: #e5e7eb;
+    color: #1f2937;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+}
+
+/* Stats card styling */
+.stats-card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.stats-number {
+    font-size: 1.875rem;
+    font-weight: 700;
+    text-align: center;
+    color: #7c3aed;
+}
+
+.stats-label {
+    text-align: center;
+    color: #4b5563;
+}
+
+/* Navigation styling */
+.nav-link {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: 0.25rem;
+}
+.nav-link:hover {
+    background-color: #6d28d9;
+    color: #ffffff;
+}
+
+/* Problem list styling */
+.problem-card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+.problem-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #5b21b6;
+}
+.problem-title:hover {
+    color: #7c3aed;
+}
+
+.problem-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.problem-tags {
+    margin-top: 0.5rem;
+}
+
+.problem-tag {
+    background-color: #f3f4f6;
+    color: #1f2937;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Solution styling */
+.solution-card {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+.solution-card:last-child {
+    border-bottom: 0;
+}
+
+.solution-meta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.solution-code {
+    background-color: #f3f4f6;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    overflow-x: auto;
+}
+
+/* Filter styling */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-select {
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .filter-container {
+        flex-wrap: nowrap;
+    }
+    
+    .filter-group {
+        margin-bottom: 0;
+    }
+}

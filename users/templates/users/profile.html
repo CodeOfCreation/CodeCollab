@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Profile - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-purple-800">Profile</h1>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <div class="flex items-center mb-4">
+            <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+                {{ user.first_name.0|default:user.username.0|upper }}
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold">{{ user.username }}</h2>
+                <p class="text-gray-600">{{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ problems_created }}</h3>
+            <p class="text-center text-gray-600">Problems Created</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ solutions_submitted }}</h3>
+            <p class="text-center text-gray-600">Solutions Submitted</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ comments_posted }}</h3>
+            <p class="text-center text-gray-600">Comments Posted</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ total_upvotes }}</h3>
+            <p class="text-center text-gray-600">Total Upvotes</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div>
+        <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Activity</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            {% if recent_problems or recent_solutions %}
+                <div class="space-y-4">
+                    {% for problem in recent_problems %}
+                    <div class="border-b pb-2 last:border-b-0">
+                        <p class="font-semibold">Created problem: <a href="{% url 'problem_detail' problem.id %}" class="text-purple-600 hover:underline">{{ problem.title }}</a></p>
+                        <p class="text-sm text-gray-600">{{ problem.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                    
+                    {% for solution in recent_solutions %}
+                    <div class="border-b pb-2 last:border-b-0">
+                        <p class="font-semibold">Submitted solution for: <a href="{% url 'problem_detail' solution.problem.id %}" class="text-purple-600 hover:underline">{{ solution.problem.title }}</a></p>
+                        <p class="text-sm text-gray-600">{{ solution.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No recent activity</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

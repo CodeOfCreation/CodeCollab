@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Problems - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-purple-800">Problems</h1>
+        <p class="text-gray-600">Browse and solve coding challenges</p>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <a href="{% url 'create_problem' %}" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-300 mb-4 md:mb-0">
+            Create Problem
+        </a>
+        
+        <div class="w-full md:w-auto">
+            <form method="get" class="flex flex-wrap gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                    <select name="difficulty" class="border rounded px-3 py-2">
+                        <option value="all" {% if selected_difficulty == 'all' %}selected{% endif %}>All Difficulties</option>
+                        <option value="beginner" {% if selected_difficulty == 'beginner' %}selected{% endif %}>Beginner</option>
+                        <option value="medium" {% if selected_difficulty == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="hard" {% if selected_difficulty == 'hard' %}selected{% endif %}>Hard</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                    <select name="language" class="border rounded px-3 py-2">
+                        <option value="all" {% if selected_language == 'all' %}selected{% endif %}>All Languages</option>
+                        <option value="python" {% if selected_language == 'python' %}selected{% endif %}>Python</option>
+                        <option value="java" {% if selected_language == 'java' %}selected{% endif %}>Java</option>
+                        <option value="c" {% if selected_language == 'c' %}selected{% endif %}>C</option>
+                        <option value="cpp" {% if selected_language == 'cpp' %}selected{% endif %}>C++</option>
+                        <option value="javascript" {% if selected_language == 'javascript' %}selected{% endif %}>JavaScript</option>
+                        <option value="go" {% if selected_language == 'go' %}selected{% endif %}>Go</option>
+                        <option value="rust" {% if selected_language == 'rust' %}selected{% endif %}>Rust</option>
+                        <option value="r" {% if selected_language == 'r' %}selected{% endif %}>R</option>
+                        <option value="ruby" {% if selected_language == 'ruby' %}selected{% endif %}>Ruby</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tag</label>
+                    <select name="tag" class="border rounded px-3 py-2">
+                        <option value="all" {% if selected_tag == 'all' %}selected{% endif %}>All Tags</option>
+                        {% for tag in tags %}
+                        <option value="{{ tag.name }}" {% if selected_tag == tag.name %}selected{% endif %}>{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-6">
+                    Filter
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        {% for problem in problems %}
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <a href="{% url 'problem_detail' problem.id %}" class="block">
+                <h3 class="text-xl font-semibold mb-2 text-purple-800 hover:text-purple-600">{{ problem.title }}</h3>
+                <p class="text-gray-600 mb-4">{{ problem.description|truncatewords:30 }}</p>
+                <div class="flex items-center text-sm text-gray-600">
+                    <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.difficulty }}</span>
+                    <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.language }}</span>
+                    <span class="mr-4">👍 {{ problem.upvotes }}</span>
+                    <span class="mr-4">💡 {{ problem.solutions.count }} solutions</span>
+                    <span>👁️ {{ problem.views }} views</span>
+                </div>
+                <div class="mt-2">
+                    {% for tag in problem.tags.all %}
+                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded mr-2 text-sm">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-gray-600">No problems found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

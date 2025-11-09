@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-purple-800">Welcome back, {{ user.username }}!</h1>
+        <p class="text-gray-600">Here's your coding activity overview</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ problems_created }}</h3>
+            <p class="text-center text-gray-600">Problems Created</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ solutions_submitted }}</h3>
+            <p class="text-center text-gray-600">Solutions Submitted</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ comments_posted }}</h3>
+            <p class="text-center text-gray-600">Comments Posted</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ total_upvotes }}</h3>
+            <p class="text-center text-gray-600">Total Upvotes</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-purple-800">Quick Actions</h2>
+        <div class="flex space-x-4">
+            <a href="{% url 'create_problem' %}" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300">
+                Create Problem
+            </a>
+            <a href="{% url 'problems_list' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                Browse Problems
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Problems -->
+    <div>
+        <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Problems</h2>
+        <div class="space-y-4">
+            {% for problem in recent_problems %}
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <a href="{% url 'problem_detail' problem.id %}" class="block">
+                    <h3 class="font-semibold text-purple-800 hover:text-purple-600">{{ problem.title }}</h3>
+                    <div class="flex items-center text-sm text-gray-600 mt-2">
+                        <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.difficulty }}</span>
+                        <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.language }}</span>
+                        <span>{{ problem.solutions.count }} solutions</span>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text-gray-600">No recent problems available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block title %}CodeCollab - Collaborative Coding Platform{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <section class="text-center py-16">
+        <h1 class="text-5xl font-bold mb-6 text-purple-800">Collaborative Coding Platform</h1>
+        <p class="text-xl mb-8 text-gray-700">Share Code, Solve Together</p>
+        <p class="text-lg mb-8 text-gray-600 max-w-2xl mx-auto">
+            A platform for programmers to post coding challenges, share solutions, and engage in rich discussions with syntax highlighting and real-time collaboration.
+        </p>
+        <a href="{% url 'signup' %}" class="bg-purple-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700 transition duration-300">
+            Start Collaborating
+        </a>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16">
+        <h2 class="text-3xl font-bold text-center mb-12 text-purple-800">Powerful Features</h2>
+        <p class="text-center mb-12 text-gray-700">Everything you need for collaborative coding</p>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <i class="fas fa-code text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Rich Code Editor</h3>
+                <p class="text-gray-600">Syntax highlighting for Python, Java, C, JavaScript, and more with line-by-line discussions.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <i class="fas fa-users text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Collaborative Learning</h3>
+                <p class="text-gray-600">Share solutions, get feedback, and learn from the community in real-time.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <i class="fas fa-chart-bar text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Track Progress</h3>
+                <p class="text-gray-600">Comprehensive dashboards showing your activity, stats, and engagement metrics.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <i class="fas fa-trophy text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Solution Ranking</h3>
+                <p class="text-gray-600">Upvote the best solutions and earn recognition for your contributions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-purple-100 rounded-lg text-center">
+        <h2 class="text-3xl font-bold mb-4 text-purple-800">Ready to Start?</h2>
+        <p class="text-lg mb-8 text-gray-700">Join thousands of developers sharing knowledge and solving problems together.</p>
+        <a href="{% url 'signup' %}" class="bg-purple-600 text-white px-8 py-4 rounded-lg text-xl font-semibold hover:bg-purple-700 transition duration-300">
+            Get Started Free
+        </a>
+    </section>
+</div>
+{% endblock %}

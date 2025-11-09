@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CodeCollab{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #efc6ec;
+            scroll-behavior: smooth;
+        }
+        .navbar-bg {
+            background-color: #7D48EE;
+        }
+        .hover-color {
+            background-color: #8D1651;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="navbar-bg text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-2xl font-bold">CodeCollab</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Dashboard</a>
+                    <a href="{% url 'problems_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Problems</a>
+                    <a href="{% url 'profile' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Profile</a>
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="hover:bg-purple-700 px-3 py-2 rounded">Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Login</a>
+                    <a href="{% url 'signup' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 CodeCollab. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

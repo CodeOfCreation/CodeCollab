@@ -1,0 +1,91 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ problem.title }} - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-purple-800">{{ problem.title }}</h1>
+        <div class="flex items-center text-sm text-gray-600 mt-2">
+            <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.difficulty }}</span>
+            <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.language }}</span>
+            <span class="mr-4">👍 {{ problem.upvotes }}</span>
+            <span class="mr-4">💡 {{ problem.solutions.count }} solutions</span>
+            <span>👁️ {{ problem.views }} views</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Problem Description</h2>
+                <pre class="whitespace-pre-wrap text-gray-700">{{ problem.description }}</pre>
+                
+                {% if problem.test_cases %}
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Test Cases</h3>
+                    <pre class="bg-gray-100 p-4 rounded">{{ problem.test_cases }}</pre>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Solutions Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Solutions</h2>
+                {% for solution in solutions %}
+                <div class="mb-6 pb-6 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold">By {{ solution.author.username }}</span>
+                        <span class="ml-2 text-gray-600">• {{ solution.created_at|date:"M d, Y" }}</span>
+                        <span class="ml-2 text-gray-600">• 👍 {{ solution.upvotes }}</span>
+                    </div>
+                    <pre class="bg-gray-100 p-4 rounded mb-2 overflow-x-auto">{{ solution.code }}</pre>
+                    {% if solution.explanation %}
+                    <p class="text-gray-700">{{ solution.explanation }}</p>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-gray-600">No solutions yet. Be the first to submit one!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <!-- Submit Solution Form -->
+            {% if user.is_authenticated %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Submit Solution</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Your Code</label>
+                        <textarea name="code" rows="10" class="w-full border rounded p-3" placeholder="Enter your solution code here..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Explanation (Optional)</label>
+                        <textarea name="explanation" rows="4" class="w-full border rounded p-3" placeholder="Explain your solution..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+                        Submit Solution
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <p class="text-gray-600">Please <a href="{% url 'login' %}" class="text-purple-600 hover:underline">login</a> to submit a solution.</p>
+            </div>
+            {% endif %}
+
+            <!-- Tags -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Tags</h2>
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in problem.tags.all %}
+                    <span class="bg-gray-200 text-gray-800 px-3 py-1 rounded">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

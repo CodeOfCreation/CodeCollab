@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Login - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-purple-800">Login to CodeCollab</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="{{ form.username.id_for_label }}" class="block text-gray-700 mb-2">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.password.id_for_label }}" class="block text-gray-700 mb-2">Password</label>
+                {{ form.password }}
+            </div>
+            {% if form.errors %}
+                <div class="text-red-500 mb-4">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+                Login
+            </button>
+        </form>
+        <p class="text-center mt-4">
+            Don't have an account? <a href="{% url 'signup' %}" class="text-purple-600 hover:underline">Sign up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
