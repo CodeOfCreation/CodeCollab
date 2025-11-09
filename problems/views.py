@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Problem, Tag, Solution
-from .forms import ProblemForm, SolutionForm
+from django.http import JsonResponse
+from .models import Problem, Tag, Solution, Comment, Upvote
+from .forms import ProblemForm
 
 
 def problems_list(request):
@@ -40,27 +41,67 @@ def problem_detail(request, problem_id):
     problem.views += 1
     problem.save()
     
-    solutions = problem.solutions.all()
+    solutions = problem.solutions.all().order_by('-upvotes', '-created_at')
+    comments = problem.comments.all()
+    
+    # Check if current user has upvoted this problem
+    user_upvoted = False
+    if request.user.is_authenticated:
+        user_upvoted = Upvote.objects.filter(user=request.user, problem=problem).exists()
     
     if request.method == 'POST' and request.user.is_authenticated:
-        code = request.POST.get('code')
-        explanation = request.POST.get('explanation', '')
+        if 'code' in request.POST:  # Submit solution
+            code = request.POST.get('code')
+            explanation = request.POST.get('explanation', '')
+            
+            if code:
+                solution = Solution.objects.create(
+                    problem=problem,
+                    author=request.user,
+                    code=code,
+                    explanation=explanation
+                )
+                messages.success(request, 'Solution submitted successfully!')
+                return redirect('problem_detail', problem_id=problem.id)
+            else:
+                messages.error(request, 'Please enter your solution code.')
         
-        if code:
-            solution = Solution.objects.create(
-                problem=problem,
-                author=request.user,
-                code=code,
-                explanation=explanation
+        elif 'comment' in request.POST:  # Add comment
+            content = request.POST.get('comment')
+            if content:
+                Comment.objects.create(
+                    problem=problem,
+                    author=request.user,
+                    content=content
+                )
+                messages.success(request, 'Comment added successfully!')
+                return redirect('problem_detail', problem_id=problem.id)
+            else:
+                messages.error(request, 'Comment cannot be empty.')
+        
+        elif 'upvote' in request.POST:  # Upvote problem
+            upvote, created = Upvote.objects.get_or_create(
+                user=request.user,
+                problem=problem
             )
-            messages.success(request, 'Solution submitted successfully!')
+            if created:
+                problem.upvotes += 1
+                problem.save()
+                messages.success(request, 'Problem upvoted!')
+            else:
+                # Remove upvote if already exists
+                upvote.delete()
+                problem.upvotes -= 1
+                problem.save()
+                messages.info(request, 'Upvote removed.')
+            
             return redirect('problem_detail', problem_id=problem.id)
-        else:
-            messages.error(request, 'Please enter your solution code.')
     
     context = {
         'problem': problem,
         'solutions': solutions,
+        'comments': comments,
+        'user_upvoted': user_upvoted,
     }
     return render(request, 'problems/problem_detail.html', context)
 
@@ -89,3 +130,45 @@ def create_problem(request):
         form = ProblemForm()
     
     return render(request, 'problems/create_problem.html', {'form': form})
+
+
+@login_required
+def upvote_solution(request, solution_id):
+    """Upvote a solution"""
+    solution = get_object_or_404(Solution, id=solution_id)
+    upvote, created = Upvote.objects.get_or_create(
+        user=request.user,
+        solution=solution
+    )
+    
+    if created:
+        solution.upvotes += 1
+        solution.save()
+        messages.success(request, 'Solution upvoted!')
+    else:
+        # Remove upvote if already exists
+        upvote.delete()
+        solution.upvotes -= 1
+        solution.save()
+        messages.info(request, 'Upvote removed.')
+    
+    return redirect('problem_detail', problem_id=solution.problem.id)
+
+
+@login_required
+def add_comment(request, problem_id):
+    """Add a comment to a problem"""
+    problem = get_object_or_404(Problem, id=problem_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Comment.objects.create(
+                problem=problem,
+                author=request.user,
+                content=content
+            )
+            messages.success(request, 'Comment added successfully!')
+        else:
+            messages.error(request, 'Comment cannot be empty.')
+    
+    return redirect('problem_detail', problem_id=problem.id)

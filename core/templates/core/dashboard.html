@@ -24,8 +24,8 @@
             <p class="text-center text-gray-600">Comments Posted</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-3xl font-bold text-center text-purple-600">{{ total_upvotes }}</h3>
-            <p class="text-center text-gray-600">Total Upvotes</p>
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ upvotes_received }}</h3>
+            <p class="text-center text-gray-600">Upvotes Received</p>
         </div>
     </div>
 
@@ -51,6 +51,8 @@
                 <a href="{% url 'problem_detail' problem.id %}" class="block">
                     <h3 class="font-semibold text-purple-800 hover:text-purple-600">{{ problem.title }}</h3>
                     <div class="flex items-center text-sm text-gray-600 mt-2">
+                        <span>By {{ problem.author.username }}</span>
+                        <span class="mx-2">•</span>
                         <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.difficulty }}</span>
                         <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.language }}</span>
                         <span>{{ problem.solutions.count }} solutions</span>

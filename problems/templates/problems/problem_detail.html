@@ -7,6 +7,8 @@
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-purple-800">{{ problem.title }}</h1>
         <div class="flex items-center text-sm text-gray-600 mt-2">
+            <span>By <a href="#" class="text-purple-600 hover:underline">{{ problem.author.username }}</a></span>
+            <span class="mx-2">•</span>
             <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.difficulty }}</span>
             <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ problem.language }}</span>
             <span class="mr-4">👍 {{ problem.upvotes }}</span>
@@ -29,6 +31,35 @@
                 {% endif %}
             </div>
 
+            <!-- Comments Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Comments</h2>
+                {% for comment in comments %}
+                <div class="mb-4 pb-4 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold">{{ comment.author.username }}</span>
+                        <span class="ml-2 text-gray-600">• {{ comment.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <p class="text-gray-700">{{ comment.content }}</p>
+                </div>
+                {% empty %}
+                <p class="text-gray-600">No comments yet.</p>
+                {% endfor %}
+                
+                {% if user.is_authenticated %}
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment" value="1">
+                    <div class="flex">
+                        <input type="text" name="comment" placeholder="Add a comment..." class="flex-grow border rounded-l px-3 py-2">
+                        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-r">Comment</button>
+                    </div>
+                </form>
+                {% else %}
+                <p class="text-gray-600 mt-4">Please <a href="{% url 'login' %}" class="text-purple-600 hover:underline">login</a> to add a comment.</p>
+                {% endif %}
+            </div>
+
             <!-- Solutions Section -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-4">Solutions</h2>
@@ -38,6 +69,12 @@
                         <span class="font-semibold">By {{ solution.author.username }}</span>
                         <span class="ml-2 text-gray-600">• {{ solution.created_at|date:"M d, Y" }}</span>
                         <span class="ml-2 text-gray-600">• 👍 {{ solution.upvotes }}</span>
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'upvote_solution' solution.id %}" class="inline ml-2">
+                            {% csrf_token %}
+                            <button type="submit" class="text-purple-600 hover:text-purple-800">Upvote</button>
+                        </form>
+                        {% endif %}
                     </div>
                     <pre class="bg-gray-100 p-4 rounded mb-2 overflow-x-auto">{{ solution.code }}</pre>
                     {% if solution.explanation %}
@@ -73,6 +110,19 @@
             {% else %}
             <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                 <p class="text-gray-600">Please <a href="{% url 'login' %}" class="text-purple-600 hover:underline">login</a> to submit a solution.</p>
+            </div>
+            {% endif %}
+
+            <!-- Upvote Button -->
+            {% if user.is_authenticated %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="upvote" value="1">
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                        {% if user_upvoted %}Remove Upvote{% else %}Upvote Problem{% endif %}
+                    </button>
+                </form>
             </div>
             {% endif %}
 

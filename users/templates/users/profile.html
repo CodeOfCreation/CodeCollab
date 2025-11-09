@@ -36,8 +36,8 @@
             <p class="text-center text-gray-600">Comments Posted</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-3xl font-bold text-center text-purple-600">{{ total_upvotes }}</h3>
-            <p class="text-center text-gray-600">Total Upvotes</p>
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ upvotes_received }}</h3>
+            <p class="text-center text-gray-600">Upvotes Received</p>
         </div>
     </div>
 
@@ -45,7 +45,7 @@
     <div>
         <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Activity</h2>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            {% if recent_problems or recent_solutions %}
+            {% if recent_problems or recent_solutions or recent_comments %}
                 <div class="space-y-4">
                     {% for problem in recent_problems %}
                     <div class="border-b pb-2 last:border-b-0">
@@ -58,6 +58,13 @@
                     <div class="border-b pb-2 last:border-b-0">
                         <p class="font-semibold">Submitted solution for: <a href="{% url 'problem_detail' solution.problem.id %}" class="text-purple-600 hover:underline">{{ solution.problem.title }}</a></p>
                         <p class="text-sm text-gray-600">{{ solution.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                    
+                    {% for comment in recent_comments %}
+                    <div class="border-b pb-2 last:border-b-0">
+                        <p class="font-semibold">Commented on: <a href="{% url 'problem_detail' comment.problem.id %}" class="text-purple-600 hover:underline">{{ comment.problem.title }}</a></p>
+                        <p class="text-sm text-gray-600">{{ comment.content|truncatewords:10 }} • {{ comment.created_at|date:"M d, Y H:i" }}</p>
                     </div>
                     {% endfor %}
                 </div>
