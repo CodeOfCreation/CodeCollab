@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Problem, Tag, Solution, Comment, Upvote
-from .forms import ProblemForm
+from .models import Problem, Tag, Solution, Comment, Upvote, Blog
+from .forms import ProblemForm, BlogForm
 
 
 def problems_list(request):
@@ -172,3 +172,103 @@ def add_comment(request, problem_id):
             messages.error(request, 'Comment cannot be empty.')
     
     return redirect('problem_detail', problem_id=problem.id)
+
+
+# Blog Views
+def blog_list(request):
+    """List all published blogs"""
+    blogs = Blog.objects.filter(status='published').order_by('-created_at')
+    draft_blogs = []
+    
+    if request.user.is_authenticated:
+        draft_blogs = Blog.objects.filter(author=request.user, status='draft').order_by('-created_at')
+    
+    context = {
+        'blogs': blogs,
+        'draft_blogs': draft_blogs,
+    }
+    return render(request, 'problems/blogs.html', context)
+
+
+def blog_detail(request, slug):
+    """View blog details"""
+    blog = get_object_or_404(Blog, slug=slug)
+    if blog.status == 'draft' and blog.author != request.user:
+        # Only allow author to view their own draft
+        if not request.user.is_authenticated or blog.author != request.user:
+            return redirect('blog_list')
+    
+    blog.views += 1
+    blog.save()
+    
+    comments = blog.comments.all()
+    
+    # Check if current user has upvoted this blog
+    user_upvoted = False
+    if request.user.is_authenticated:
+        user_upvoted = Upvote.objects.filter(user=request.user, blog=blog).exists()
+    
+    if request.method == 'POST' and request.user.is_authenticated:
+        if 'comment' in request.POST:  # Add comment
+            content = request.POST.get('comment')
+            if content:
+                Comment.objects.create(
+                    blog=blog,
+                    author=request.user,
+                    content=content
+                )
+                messages.success(request, 'Comment added successfully!')
+                return redirect('blog_detail', slug=blog.slug)
+            else:
+                messages.error(request, 'Comment cannot be empty.')
+        
+        elif 'upvote' in request.POST:  # Upvote blog
+            upvote, created = Upvote.objects.get_or_create(
+                user=request.user,
+                blog=blog
+            )
+            if created:
+                blog.upvotes += 1
+                blog.save()
+                messages.success(request, 'Blog upvoted!')
+            else:
+                # Remove upvote if already exists
+                upvote.delete()
+                blog.upvotes -= 1
+                blog.save()
+                messages.info(request, 'Upvote removed.')
+            
+            return redirect('blog_detail', slug=blog.slug)
+    
+    context = {
+        'blog': blog,
+        'comments': comments,
+        'user_upvoted': user_upvoted,
+    }
+    return render(request, 'problems/blog_detail.html', context)
+
+
+@login_required
+def create_blog(request):
+    """Create a new blog"""
+    if request.method == 'POST':
+        form = BlogForm(request.POST)
+        if form.is_valid():
+            blog = form.save(commit=False)
+            blog.author = request.user
+            blog.save()
+            
+            # Handle tags
+            tags_str = form.cleaned_data.get('tags_str', '')
+            if tags_str:
+                tags_list = [tag.strip() for tag in tags_str.split(',')]
+                for tag_name in tags_list:
+                    if tag_name:
+                        tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+                        blog.tags.add(tag)
+            
+            return redirect('blog_detail', slug=blog.slug)
+    else:
+        form = BlogForm()
+    
+    return render(request, 'problems/create_blog.html', {'form': form})

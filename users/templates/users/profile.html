@@ -22,7 +22,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ problems_created }}</h3>
             <p class="text-center text-gray-600">Problems Created</p>
@@ -36,6 +36,10 @@
             <p class="text-center text-gray-600">Comments Posted</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ blogs_created }}</h3>
+            <p class="text-center text-gray-600">Blogs Created</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ upvotes_received }}</h3>
             <p class="text-center text-gray-600">Upvotes Received</p>
         </div>
@@ -45,8 +49,15 @@
     <div>
         <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Activity</h2>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            {% if recent_problems or recent_solutions or recent_comments %}
+            {% if recent_problems or recent_solutions or recent_comments or recent_blogs %}
                 <div class="space-y-4">
+                    {% for blog in recent_blogs %}
+                    <div class="border-b pb-2 last:border-b-0">
+                        <p class="font-semibold">Created blog: <a href="{% url 'blog_detail' blog.slug %}" class="text-purple-600 hover:underline">{{ blog.title }}</a></p>
+                        <p class="text-sm text-gray-600">{{ blog.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                    
                     {% for problem in recent_problems %}
                     <div class="border-b pb-2 last:border-b-0">
                         <p class="font-semibold">Created problem: <a href="{% url 'problem_detail' problem.id %}" class="text-purple-600 hover:underline">{{ problem.title }}</a></p>

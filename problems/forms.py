@@ -1,5 +1,5 @@
 from django import forms
-from .models import Problem, Solution
+from .models import Problem, Solution, Blog
 
 
 class ProblemForm(forms.ModelForm):
@@ -30,4 +30,23 @@ class SolutionForm(forms.ModelForm):
         widgets = {
             'code': forms.Textarea(attrs={'class': 'w-full border rounded p-3', 'rows': 10, 'placeholder': 'Enter your solution code here...'}),
             'explanation': forms.Textarea(attrs={'class': 'w-full border rounded p-3', 'rows': 4, 'placeholder': 'Explain your solution...'}),
+        }
+
+
+class BlogForm(forms.ModelForm):
+    tags_str = forms.CharField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter tags separated by commas (e.g., python, django, tutorial)'
+        })
+    )
+    
+    class Meta:
+        model = Blog
+        fields = ['title', 'content', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border rounded'}),
+            'content': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border rounded h-64'}),
+            'status': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded'}),
         }

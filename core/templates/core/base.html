@@ -31,6 +31,7 @@
                 {% if user.is_authenticated %}
                     <a href="{% url 'dashboard' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Dashboard</a>
                     <a href="{% url 'problems_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Problems</a>
+                    <a href="{% url 'blog_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Blogs</a>
                     <a href="{% url 'profile' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Profile</a>
                     <form method="post" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}
@@ -53,7 +54,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-4">
         <div class="container mx-auto text-center">
-            <p>&copy; 2025 CodeCollab. All Rights Reserved. This Project Is Completely Built by MAHADEV SHETE & NIKHIL ASHTURE</p>
+            <p>&copy; 2025 CodeCollab. All rights reserved.</p>
         </div>
     </footer>
 </body>

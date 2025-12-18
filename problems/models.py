@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from django.utils.text import slugify
 
 
 class Tag(models.Model):
@@ -7,6 +8,40 @@ class Tag(models.Model):
     
     def __str__(self):
         return self.name
+
+
+class Blog(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    content = models.TextField()
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='blogs')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    views = models.IntegerField(default=0)
+    upvotes = models.IntegerField(default=0)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        
+        # Ensure slug uniqueness
+        original_slug = self.slug
+        counter = 1
+        while Blog.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+            self.slug = f"{original_slug}-{counter}"
+            counter += 1
+        
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.title
 
 
 class Problem(models.Model):
@@ -58,6 +93,7 @@ class Solution(models.Model):
 class Comment(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -70,13 +106,16 @@ class Upvote(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('user', 'problem', 'solution')
+        unique_together = ('user', 'problem', 'solution', 'blog')
     
     def __str__(self):
         if self.problem:
             return f"{self.user.username} upvoted problem {self.problem.title}"
         elif self.solution:
             return f"{self.user.username} upvoted solution for {self.solution.problem.title}"
+        elif self.blog:
+            return f"{self.user.username} upvoted blog {self.blog.title}"
