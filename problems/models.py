@@ -10,6 +10,33 @@ class Tag(models.Model):
         return self.name
 
 
+class AI_Tool(models.Model):
+    CATEGORY_CHOICES = [
+        ('productivity', 'Productivity'),
+        ('design', 'Design'),
+        ('development', 'Development'),
+        ('writing', 'Writing'),
+        ('marketing', 'Marketing'),
+        ('education', 'Education'),
+        ('health', 'Health'),
+        ('finance', 'Finance'),
+        ('other', 'Other'),
+    ]
+    
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    link = models.URLField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ai_tools')
+    upvotes = models.IntegerField(default=0)
+    views = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    
+    def __str__(self):
+        return self.name
+
+
 class Blog(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
@@ -94,6 +121,7 @@ class Comment(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    ai_tool = models.ForeignKey('AI_Tool', on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -107,10 +135,11 @@ class Upvote(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
+    ai_tool = models.ForeignKey('AI_Tool', on_delete=models.CASCADE, null=True, blank=True, related_name='upvotes_by_users')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('user', 'problem', 'solution', 'blog')
+        unique_together = ('user', 'problem', 'solution', 'blog', 'ai_tool')
     
     def __str__(self):
         if self.problem:
@@ -119,3 +148,5 @@ class Upvote(models.Model):
             return f"{self.user.username} upvoted solution for {self.solution.problem.title}"
         elif self.blog:
             return f"{self.user.username} upvoted blog {self.blog.title}"
+        elif self.ai_tool:
+            return f"{self.user.username} upvoted AI tool {self.ai_tool.name}"

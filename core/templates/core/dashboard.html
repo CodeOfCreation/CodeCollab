@@ -10,7 +10,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ problems_created }}</h3>
             <p class="text-center text-gray-600">Problems Created</p>
@@ -28,6 +28,10 @@
             <p class="text-center text-gray-600">Blogs Created</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ ai_tools_created }}</h3>
+            <p class="text-center text-gray-600">AI Tools Created</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ upvotes_received }}</h3>
             <p class="text-center text-gray-600">Upvotes Received</p>
         </div>
@@ -36,18 +40,24 @@
     <!-- Quick Actions -->
     <div class="mb-8">
         <h2 class="text-2xl font-semibold mb-4 text-purple-800">Quick Actions</h2>
-        <div class="flex space-x-4">
+        <div class="flex flex-wrap gap-4">
             <a href="{% url 'create_problem' %}" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300">
                 Create Problem
             </a>
             <a href="{% url 'create_blog' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
                 Write Blog
             </a>
-            <a href="{% url 'problems_list' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300">
+            <a href="{% url 'create_ai_tool' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300">
+                Add AI Tool
+            </a>
+            <a href="{% url 'problems_list' %}" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition duration-300">
                 Browse Problems
             </a>
-            <a href="{% url 'blog_list' %}" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition duration-300">
+            <a href="{% url 'blog_list' %}" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300">
                 Read Blogs
+            </a>
+            <a href="{% url 'ai_tool_list' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300">
+                AI Tools
             </a>
         </div>
     </div>
@@ -76,7 +86,7 @@
     </div>
 
     <!-- Recent Blogs -->
-    <div>
+    <div class="mb-8">
         <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Blogs</h2>
         <div class="space-y-4">
             {% for blog in recent_blogs %}
@@ -94,6 +104,29 @@
             </div>
             {% empty %}
             <p class="text-gray-600">No recent blogs available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent AI Tools -->
+    <div>
+        <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent AI Tools</h2>
+        <div class="space-y-4">
+            {% for ai_tool in recent_ai_tools %}
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <a href="{% url 'ai_tool_detail' ai_tool.pk %}" class="block">
+                    <h3 class="font-semibold text-purple-800 hover:text-purple-600">{{ ai_tool.name }}</h3>
+                    <div class="flex items-center text-sm text-gray-600 mt-2">
+                        <span>By {{ ai_tool.author.username }}</span>
+                        <span class="mx-2">•</span>
+                        <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ ai_tool.category|title }}</span>
+                        <span class="mr-4">👍 {{ ai_tool.upvotes }}</span>
+                        <span>👁️ {{ ai_tool.views }} views</span>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text-gray-600">No recent AI tools available.</p>
             {% endfor %}
         </div>
     </div>

@@ -32,6 +32,7 @@
                     <a href="{% url 'dashboard' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Dashboard</a>
                     <a href="{% url 'problems_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Problems</a>
                     <a href="{% url 'blog_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Blogs</a>
+                    <a href="{% url 'ai_tool_list' %}" class="hover:bg-purple-700 px-3 py-2 rounded">AI Tools</a>
                     <a href="{% url 'profile' %}" class="hover:bg-purple-700 px-3 py-2 rounded">Profile</a>
                     <form method="post" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Problem, Solution, Blog
+from .models import Problem, Solution, Blog, AI_Tool
 
 
 class ProblemForm(forms.ModelForm):
@@ -49,4 +49,24 @@ class BlogForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border rounded'}),
             'content': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border rounded h-64'}),
             'status': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded'}),
+        }
+
+
+class AI_ToolForm(forms.ModelForm):
+    tags_str = forms.CharField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter tags separated by commas (e.g., ai, productivity, automation)'
+        })
+    )
+    
+    class Meta:
+        model = AI_Tool
+        fields = ['name', 'description', 'link', 'category']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border rounded'}),
+            'description': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border rounded h-40'}),
+            'link': forms.URLInput(attrs={'class': 'w-full px-3 py-2 border rounded', 'placeholder': 'https://example.com'}),
+            'category': forms.Select(attrs={'class': 'w-full px-3 py-2 border rounded'}),
         }

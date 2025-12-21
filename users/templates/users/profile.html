@@ -22,7 +22,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ problems_created }}</h3>
             <p class="text-center text-gray-600">Problems Created</p>
@@ -40,6 +40,10 @@
             <p class="text-center text-gray-600">Blogs Created</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-3xl font-bold text-center text-purple-600">{{ ai_tools_created }}</h3>
+            <p class="text-center text-gray-600">AI Tools Created</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-3xl font-bold text-center text-purple-600">{{ upvotes_received }}</h3>
             <p class="text-center text-gray-600">Upvotes Received</p>
         </div>
@@ -49,8 +53,15 @@
     <div>
         <h2 class="text-2xl font-semibold mb-4 text-purple-800">Recent Activity</h2>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            {% if recent_problems or recent_solutions or recent_comments or recent_blogs %}
+            {% if recent_problems or recent_solutions or recent_comments or recent_blogs or recent_ai_tools %}
                 <div class="space-y-4">
+                    {% for ai_tool in recent_ai_tools %}
+                    <div class="border-b pb-2 last:border-b-0">
+                        <p class="font-semibold">Added AI tool: <a href="{% url 'ai_tool_detail' ai_tool.pk %}" class="text-purple-600 hover:underline">{{ ai_tool.name }}</a></p>
+                        <p class="text-sm text-gray-600">{{ ai_tool.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                    
                     {% for blog in recent_blogs %}
                     <div class="border-b pb-2 last:border-b-0">
                         <p class="font-semibold">Created blog: <a href="{% url 'blog_detail' blog.slug %}" class="text-purple-600 hover:underline">{{ blog.title }}</a></p>

@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Problem, Tag, Solution, Comment, Upvote, Blog
-from .forms import ProblemForm, BlogForm
+from .models import Problem, Tag, Solution, Comment, Upvote, Blog, AI_Tool
+from .forms import ProblemForm, BlogForm, AI_ToolForm
 
 
 def problems_list(request):
@@ -272,3 +272,102 @@ def create_blog(request):
         form = BlogForm()
     
     return render(request, 'problems/create_blog.html', {'form': form})
+
+
+# AI Tool Views
+def ai_tool_list(request):
+    """List all AI tools"""
+    ai_tools = AI_Tool.objects.all().order_by('-created_at')
+    categories = [choice[0] for choice in AI_Tool.CATEGORY_CHOICES]
+    
+    # Apply filters
+    category = request.GET.get('category', 'all')
+    
+    if category != 'all':
+        ai_tools = ai_tools.filter(category=category)
+    
+    context = {
+        'ai_tools': ai_tools,
+        'categories': categories,
+        'selected_category': category,
+    }
+    return render(request, 'problems/ai_tools.html', context)
+
+
+def ai_tool_detail(request, pk):
+    """View AI tool details"""
+    ai_tool = get_object_or_404(AI_Tool, pk=pk)
+    ai_tool.views += 1
+    ai_tool.save()
+    
+    comments = ai_tool.comments.all()
+    
+    # Check if current user has upvoted this AI tool
+    user_upvoted = False
+    if request.user.is_authenticated:
+        user_upvoted = Upvote.objects.filter(user=request.user, ai_tool=ai_tool).exists()
+    
+    if request.method == 'POST' and request.user.is_authenticated:
+        if 'comment' in request.POST:  # Add comment
+            content = request.POST.get('comment')
+            if content:
+                Comment.objects.create(
+                    ai_tool=ai_tool,
+                    author=request.user,
+                    content=content
+                )
+                messages.success(request, 'Comment added successfully!')
+                return redirect('ai_tool_detail', pk=ai_tool.pk)
+            else:
+                messages.error(request, 'Comment cannot be empty.')
+        
+        elif 'upvote' in request.POST:  # Upvote AI tool
+            upvote, created = Upvote.objects.get_or_create(
+                user=request.user,
+                ai_tool=ai_tool
+            )
+            if created:
+                ai_tool.upvotes += 1
+                ai_tool.save()
+                messages.success(request, 'AI tool upvoted!')
+            else:
+                # Remove upvote if already exists
+                upvote.delete()
+                ai_tool.upvotes -= 1
+                ai_tool.save()
+                messages.info(request, 'Upvote removed.')
+            
+            return redirect('ai_tool_detail', pk=ai_tool.pk)
+    
+    context = {
+        'ai_tool': ai_tool,
+        'comments': comments,
+        'user_upvoted': user_upvoted,
+    }
+    return render(request, 'problems/ai_tool_detail.html', context)
+
+
+@login_required
+def create_ai_tool(request):
+    """Create a new AI tool"""
+    if request.method == 'POST':
+        form = AI_ToolForm(request.POST)
+        if form.is_valid():
+            ai_tool = form.save(commit=False)
+            ai_tool.author = request.user
+            ai_tool.save()
+            
+            # Handle tags
+            tags_str = form.cleaned_data.get('tags_str', '')
+            if tags_str:
+                tags_list = [tag.strip() for tag in tags_str.split(',')]
+                for tag_name in tags_list:
+                    if tag_name:
+                        tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+                        ai_tool.tags.add(tag)
+            
+            return redirect('ai_tool_detail', pk=ai_tool.pk)
+    else:
+        form = AI_ToolForm()
+    
+    return render(request, 'problems/create_ai_tool.html', {'form': form})

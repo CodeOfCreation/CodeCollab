@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+
+{% block title %}AI Tools - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-purple-800">AI Tools</h1>
+        <p class="text-gray-600">Discover and share AI tools for developers</p>
+    </div>
+
+    <div class="flex justify-between items-center mb-6">
+        {% if user.is_authenticated %}
+        <a href="{% url 'create_ai_tool' %}" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+            Add AI Tool
+        </a>
+        {% endif %}
+        
+        <div>
+            <form method="get" class="flex">
+                <select name="category" class="border rounded-l px-3 py-2">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>All Categories</option>
+                    <option value="productivity" {% if selected_category == 'productivity' %}selected{% endif %}>Productivity</option>
+                    <option value="design" {% if selected_category == 'design' %}selected{% endif %}>Design</option>
+                    <option value="development" {% if selected_category == 'development' %}selected{% endif %}>Development</option>
+                    <option value="writing" {% if selected_category == 'writing' %}selected{% endif %}>Writing</option>
+                    <option value="marketing" {% if selected_category == 'marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="education" {% if selected_category == 'education' %}selected{% endif %}>Education</option>
+                    <option value="health" {% if selected_category == 'health' %}selected{% endif %}>Health</option>
+                    <option value="finance" {% if selected_category == 'finance' %}selected{% endif %}>Finance</option>
+                    <option value="other" {% if selected_category == 'other' %}selected{% endif %}>Other</option>
+                </select>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for ai_tool in ai_tools %}
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-2 text-purple-800">{{ ai_tool.name }}</h3>
+            <p class="text-gray-600 mb-4">{{ ai_tool.description|truncatewords:20 }}</p>
+            <div class="flex items-center text-sm text-gray-600 mb-4">
+                <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ ai_tool.category|title }}</span>
+                <span class="mr-4">👍 {{ ai_tool.upvotes }}</span>
+                <span>👁️ {{ ai_tool.views }} views</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <a href="{{ ai_tool.link }}" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                    Visit Tool
+                </a>
+                <a href="{% url 'ai_tool_detail' ai_tool.pk %}" class="text-purple-600 hover:underline">
+                    Details
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center">
+            <p class="text-gray-600">No AI tools found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ ai_tool.name }} - CodeCollab{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-purple-800">{{ ai_tool.name }}</h1>
+        <div class="flex items-center text-sm text-gray-600 mt-2">
+            <span>By <a href="#" class="text-purple-600 hover:underline">{{ ai_tool.author.username }}</a></span>
+            <span class="mx-2">•</span>
+            <span class="bg-gray-200 px-2 py-1 rounded mr-2">{{ ai_tool.category|title }}</span>
+            <span class="mr-4">👍 {{ ai_tool.upvotes }}</span>
+            <span>👁️ {{ ai_tool.views }} views</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Description</h2>
+                <p class="text-gray-700">{{ ai_tool.description }}</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Visit Tool</h2>
+                <a href="{{ ai_tool.link }}" target="_blank" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300 inline-block">
+                    Go to {{ ai_tool.name }}
+                </a>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Comments</h2>
+                {% for comment in comments %}
+                <div class="mb-4 pb-4 border-b border-gray-200 last:border-b-0">
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold">{{ comment.author.username }}</span>
+                        <span class="ml-2 text-gray-600">• {{ comment.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <p class="text-gray-700">{{ comment.content }}</p>
+                </div>
+                {% empty %}
+                <p class="text-gray-600">No comments yet.</p>
+                {% endfor %}
+                
+                {% if user.is_authenticated %}
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment" value="1">
+                    <div class="flex">
+                        <input type="text" name="comment" placeholder="Add a comment..." class="flex-grow border rounded-l px-3 py-2">
+                        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-r">Comment</button>
+                    </div>
+                </form>
+                {% else %}
+                <p class="text-gray-600 mt-4">Please <a href="{% url 'login' %}" class="text-purple-600 hover:underline">login</a> to add a comment.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div>
+            <!-- Upvote Button -->
+            {% if user.is_authenticated %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="upvote" value="1">
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                        {% if user_upvoted %}Remove Upvote{% else %}Upvote AI Tool{% endif %}
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Tags -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Tags</h2>
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in ai_tool.tags.all %}
+                    <span class="bg-gray-200 text-gray-800 px-3 py-1 rounded">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
